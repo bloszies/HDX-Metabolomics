@@ -8,8 +8,9 @@ These sheets should be inputted in .xlsx format with fields for ID, retention ti
 #Data Input
 Data_NoLabel <- readxl::read_excel("Data_NoLabel.xlsx", sheet = "DataDictionary")
 Data_withLabel <- readxl::read_excel("Data_withLabel.xlsx", sheet = "DataDictionary")
-
-#(optional) Only include features for which MS/MS was collected
+```
+(optional) Only include features for which MS/MS was collected
+```
 Data_NoLabel_MSMS <- Data_NoLabel[which(!is.na(Data_NoLabel$MSMS)),]
 Data_withLabel_MSMS <- Data_withLabel[which(!is.na(Data_withLabel$MSMS)),]
 ```
