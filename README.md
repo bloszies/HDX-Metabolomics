@@ -3,7 +3,7 @@ Underlying R script for database reduction and experimental data analysis
 
 # Step 1: Data input
 Two datasheets containing the HDX and non-HDX runs are needed to link unlabeled features to their labeled counterparts.
-These sheets should be inputted in .xlsx format with fields for ID, retention time, ms1 mass, and MS/MS pattern (as m/z1:intensity1 mz2:intensity2 ...)
+These sheets should be inputted in .xlsx format with fields for ID, retention time (RT), ms1 mass (MZ), and MS/MS pattern (MSMS; as m/z1:intensity1 mz2:intensity2 ...)
 ```
 #Data Input
 Data_NoLabel <- readxl::read_excel("Data_NoLabel.xlsx", sheet = "DataDictionary")
@@ -22,8 +22,8 @@ We used three criteria for the matching:
 3. The five most abundant unlabeled MSMS features must be present in the labeled MSMS with mass differences coming from different deuterium incorporation (they must also have a mass difference equal to a multiple of 1.006277 within a 1 mDa window).
 ```
 for (i in 1:nrow(Data_NoLabel)) {
-  RT1 <- as.numeric(Data_NoLabel$`Average Rt(min)`[i])
-  mz1 <- Data_NoLabel$`Average Mz`[i]
+  RT1 <- as.numeric(Data_NoLabel$RT[i])
+  mz1 <- Data_NoLabel$MZ[i]
   Label_Features <- Data_withLabel[which(Data_withLabel$RT > (RT1 - 0.2) & Data_withLabel$RT < (RT1 + 0.2) & Data_withLabel$MZ >= mz1 &
     (Data_withLabel$MZ - mz1) < 20 & (((Data_withLabel$MZ - mz1) %% 1.006277) < 0.001 |((Data_withLabel$MZ - mz1) %% 1.006277) >
     1.005277)),]
