@@ -98,5 +98,5 @@ Labeled_ID: This field will contain the IDs from the labeled data file that matc
 ExchangeNumber: This field is calculated by rounding the mass difference between labeled and unlabeled features. This field will give the number of deuterium atoms exchanged for protons in the chemical structure for each of the matched IDs. Again, if there are multiple matches, the exchange numbers will be separated by semicolons.
 For multiple matches the order is maintained, for example: if IDs 110, 145, and 170 are all found to match one unlabeled feature with 4, 5, and 6 H/D exchanges respectively, the "Labeled_ID" field will look like "110;145;170" and the "ExchangeNumber" field will be "4;5;6".
 ```
-write.table(Data_NoLabel, file = "Data_NoLabel_HDX.txt", sep = "\t")
+write.table(Data_NoLabel_MSMS, row.names = F, file = "Data_NoLabel_HDX.txt", sep = "\t")
 ```
