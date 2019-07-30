@@ -12,9 +12,8 @@ These sheets should be inputted in .xlsx format with the required fields being: 
 #Data Input
 Data_NoLabel <- readxl::read_excel("Data_NoLabel.xlsx", sheet = "DataDictionary")
 Data_withLabel <- readxl::read_excel("Data_withLabel.xlsx", sheet = "DataDictionary")
-```
-(optional) Only include features for which MS/MS was collected
-```
+
+
 Data_NoLabel_MSMS <- Data_NoLabel[which(!is.na(Data_NoLabel$MSMS)),]
 Data_withLabel_MSMS <- Data_withLabel[which(!is.na(Data_withLabel$MSMS)),]
 ```
@@ -25,41 +24,43 @@ We used three criteria for the matching:
 2. Parent mass difference is equal to a multiple of the difference between hydrogen and deuterium masses (1.006277 Da), within a 1 mDa (0.001 Da) window.
 3. The five most abundant unlabeled MSMS features must be present in the labeled MSMS with mass differences coming from different deuterium incorporation (they must also have a mass difference equal to a multiple of 1.006277 within a 1 mDa window).
 ```
-for (i in 1:nrow(Data_NoLabel)) {
-  RT1 <- as.numeric(Data_NoLabel$RT[i])
-  mz1 <- Data_NoLabel$MZ[i]
-  Label_Features <- Data_withLabel[which(Data_withLabel$RT > (RT1 - 0.2) & Data_withLabel$RT < (RT1 + 0.2) & Data_withLabel$MZ >= mz1 &
-    (Data_withLabel$MZ - mz1) < 20 & (((Data_withLabel$MZ - mz1) %% 1.006277) < 0.001 |((Data_withLabel$MZ - mz1) %% 1.006277) >
-    1.005277)),]
+for (i in 1:nrow(Data_NoLabel_MSMS)) {
+  RT1 <- as.numeric(Data_NoLabel_MSMS$RT[i])
+  mz1 <- Data_NoLabel_MSMS$MZ[i]
+  Label_Features <- Data_withLabel_MSMS[which(Data_withLabel_MSMS$RT > (RT1 - 0.2) & Data_withLabel_MSMS$RT < (RT1 + 0.2) & 
+    Data_withLabel_MSMS$MZ >= mz1 & (Data_withLabel_MSMS$MZ - mz1) < 20 & (((Data_withLabel_MSMS$MZ - mz1) %% 1.006277) < 0.001 |
+    ((Data_withLabel_MSMS$MZ - mz1) %% 1.006277) > 1.005277)),]
   if(nrow(Label_Features) < 1){
-    Data_NoLabel$LabeledID <- NA
-    Data_NoLabel$ExchangeNumber <- NA
+    Data_NoLabel_MSMS$LabeledID[i] <- NA
+    Data_NoLabel_MSMS$ExchangeNumber[i] <- NA
     next
   }
   Label_Features.list <- lapply(1:nrow(Label_Features), function(l){
-    MSMS.df <- data.frame(do.call(rbind,lapply(strsplit(Label_Features$MSMS, " ")[[1]], function(x) {
+    MSMS.df <- data.frame(do.call(rbind,lapply(strsplit(Label_Features$MSMS[l], " ")[[1]], function(x) {
       strsplit(x, ":")[[1]]
     })),stringsAsFactors = F)
+    MSMS.df$X1 <- as.numeric(MSMS.df$X1)
+    MSMS.df$X2 <- as.numeric(MSMS.df$X2)
     MSMS.df$ID <- Label_Features$ID[l]
     MSMS.df$HDX <- round(Label_Features$MZ[l] - mz1)
     MSMS.df
   })
   Label_Features.list.df <- data.frame(do.call(rbind, Label_Features.list),stringsAsFactors = F)
   
-  MSMS.df.1 <- data.frame(do.call(rbind,lapply(strsplit(Data_NoLabel$MSMS[i], " ")[[1]], function(x) {
+  MSMS.df.1 <- data.frame(do.call(rbind,lapply(strsplit(Data_NoLabel_MSMS$MSMS[i], " ")[[1]], function(x) {
     strsplit(x, ":")[[1]]
   })),stringsAsFactors = F)
   MSMS.df.1$X1 <- as.numeric(MSMS.df.1$X1)
   MSMS.df.1$X2 <- as.numeric(MSMS.df.1$X2)
   MSMS.df.1 <- MSMS.df.1[order(MSMS.df.1$X2, decreasing = T),]
-  MSMS.df.1$NoLabel_ID <- TVC_NL_MSMS$ID[i]
-  MSMS.df.1$NoLabel_MS1 <- TVC_NL_MSMS$MZ[i]
-  MSMS.df.1$NoLabel_RT <- TVC_NL_MSMS$RT[i]
+  MSMS.df.1$NoLabel_ID <- Data_NoLabel_MSMS$ID[i]
+  MSMS.df.1$NoLabel_MS1 <- Data_NoLabel_MSMS$MZ[i]
+  MSMS.df.1$NoLabel_RT <- Data_NoLabel_MSMS$RT[i]
   
   MS2_Matching <- lapply(1:3, function(j) {
     mz2 <- MSMS.df.1$X1[j]
     MSMS_match <- Label_Features.list.df[which((((Label_Features.list.df$X1 - mz2) %% 1.006277) < 0.001 | ((Label_Features.list.df$X1 - 
-      mz2) %% 1.006277) > 1.005277) & round(Label_Features.list.df$X1 - mz2) <= Label_Features.list.df$HDX),]
+                                                                                                              mz2) %% 1.006277) > 1.005277) & round(Label_Features.list.df$X1 - mz2) <= Label_Features.list.df$HDX),]
     if(nrow(MSMS_match) == 0){
       MSMS_match <- data.frame(NULL)
     } else {
@@ -69,14 +70,14 @@ for (i in 1:nrow(Data_NoLabel)) {
   })
   MS2_Matching.df <- data.frame(do.call(rbind, MS2_Matching),stringsAsFactors = F)
   if(nrow(MS2_Matching.df) == 0){
-    Data_NoLabel$LabeledID[i] <- NA
-    TVC_NL_MSMS$ExchangeNumber[i] <- NA
+    Data_NoLabel_MSMS$LabeledID[i] <- NA
+    Data_NoLabel_MSMS$ExchangeNumber[i] <- NA
     next
   }
   MS2_Matching.df$MS2_HDX <- round(MS2_Matching.df$MZ - MS2_Matching.df$X1)
-  names(MS2_Matching.df) <- c("NoLabel_MS2","NoLabel_Frag_intensity","NoLabel_ID","NoLabel_MS1","NoLabel_RT","Labeled_MS2", "Labeled_Frag_intensity", "Labeled_ID","MS1_HDX","MS2_HDX")
-  TVC_NL_MSMS$Labeled_ID[i] <- paste(unique(MS2_Matching.df$Labeled_ID), collapse = ";")
-  TVC_NL_MSMS$ExchangeNumber[i] <- paste(round((Label_Features$MZ) - mz1), collapse = ";")
+  names(MS2_Matching.df) <- c("NoLabel_MS2","NoLabel_Frag_intensity","NoLabel_ID","NoLabel_MS1","NoLabel_RT","Labeled_MS2", "Labeled_Frag_intensity", "LabeledID","MS1_HDX","MS2_HDX")
+  Data_NoLabel_MSMS$LabeledID[i] <- paste(unique(MS2_Matching.df$LabeledID), collapse = ";")
+  Data_NoLabel_MSMS$ExchangeNumber[i] <- paste(round((Label_Features$MZ) - mz1), collapse = ";")
 }
 ```
 # Step 3: Writing Output file
