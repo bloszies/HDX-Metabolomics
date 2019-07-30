@@ -1,10 +1,24 @@
 # HDX-Metabolomics
 Underlying R script for database reduction and experimental data analysis
 
+## What is contained in this Repository:
+- Experimental data analysis for hydrogen/deuterium exchange-based compound ID (outlined below)
+  - Sample Data: Data_NoLabel.xlsx and Data_withLabel.xlsx
+  - Script: HDX_Matching.R
+  - Sample output file: Data_NoLabel_HDX_output.txt
+- Database filtering code to remove erroneous isomer candidates
+  - Script: Pubchem_reduction
+
 # Background/Purpose
 The workflow described here outlines data processing for hydrogen/deuterium exchange (HDX) mass spectrometry based compound identification. Briefly, HDX aids in compound identification because it highlights the exchangeable protons in chemical structures. By incorporating deuterium into LC mobile phase composition, exchangeable protons for all compounds in the sample should be replaced with deuterium, resulting in a 1 Da mass shift. By investigating both MS1 and MS/MS data, it is possible to determine the number and positions of exchangeable protons, which can greatly aid in filtering isomer candidates so that only high confidence potential structural matches remain. 
 
 The script outlined below solves one of the underlying issues in HDX data processing, linking unlabeled and labeled features across data files. To do this, two example datasets were generated using a ThermoScientific LC-Q Exactive instrument operated in data dependent-MSMS mode with a BEH Amide column. One data set (Data_NoLabel.xlsx) was acquired using mobile phases consisting of 0.125% formic acid and 10 mM ammonium formate dissolved in water (A) or acetonitrile/water (95:5) (B). The other data set (Data_withLabel.xlsx) was acquired using 0.125% d2-Formic acid and 10mM d5-Ammonium Formate dissolved in D2O (A) or acetonitrile/D2O (95:5) (B). No matter what acquisition parameters are used, this script will only work if the same chromatography is used across different runs, with the only difference being deuterium oxide replacing water and deuterated buffers/mobile phase modifiers replacing their unlabeled counterparts. In other words, the retention times should be comparable across the two data sets, or at least the retention time differences should be relatively predictable.
+
+# Step 0: Data Preparation
+Save the two sample datasheets into the same directory, for this example, we will call it "C:\HDX". Prior to processing data, set the working directory to the saved folder:
+```
+setwd("C:/HDX")
+```
 
 # Step 1: Data input
 Two datasheets containing the HDX and non-HDX runs are needed to link unlabeled features to their labeled counterparts.
