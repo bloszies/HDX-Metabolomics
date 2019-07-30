@@ -15,14 +15,14 @@ The workflow described here outlines data processing for hydrogen/deuterium exch
 The script outlined below solves one of the underlying issues in HDX data processing, linking unlabeled and labeled features across data files. To do this, two example datasets were generated using a ThermoScientific LC-Q Exactive instrument operated in data dependent-MSMS mode with a BEH Amide column. One data set (Data_NoLabel.xlsx) was acquired using mobile phases consisting of 0.125% formic acid and 10 mM ammonium formate dissolved in water (A) or acetonitrile/water (95:5) (B). The other data set (Data_withLabel.xlsx) was acquired using 0.125% d2-Formic acid and 10mM d5-Ammonium Formate dissolved in D2O (A) or acetonitrile/D2O (95:5) (B). No matter what acquisition parameters are used, this script will only work if the same chromatography is used across different runs, with the only difference being deuterium oxide replacing water and deuterated buffers/mobile phase modifiers replacing their unlabeled counterparts. In other words, the retention times should be comparable across the two data sets, or at least the retention time differences should be relatively predictable.
 
 # Step 0: Data Preparation
-Save the two sample datasheets into the same directory, for this example, we will call it "C:\HDX". Prior to processing data, set the working directory to the saved folder:
+Save the two sample datasheets into the same directory, for this example, we will call it "C:\HDX". These data sheets were prepared by first processing the raw data generated via LC-Q Exactive in MS-DIAL. From MS-DIAL, the data was exported in .txt format, and all columns other than those needed for this scriopt were removed. It should be noted that if left in the datasheets, those columns would be untouched and keep their original data, they were removed simply to avoid confusion. Prior to processing data, set the working directory to the saved folder:
 ```
 setwd("C:/HDX")
 ```
 
 # Step 1: Data input
 Two datasheets containing the HDX and non-HDX runs are needed to link unlabeled features to their labeled counterparts.
-These sheets should be inputted in .xlsx format with the required fields being: ID, retention time (RT), ms1 mass (MZ), and MS/MS pattern (MSMS; as m/z1:intensity1 mz2:intensity2 ...)
+These sheets should be inputted in .xlsx format with the required fields being: ID, retention time (RT), ms1 mass (MZ), and MS/MS pattern (MSMS; as m/z1:intensity1 mz2:intensity2 ...).
 ```
 #Data Input
 Data_NoLabel <- readxl::read_excel("Data_NoLabel.xlsx", sheet = "DataDictionary")
