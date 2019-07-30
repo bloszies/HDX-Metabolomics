@@ -9,8 +9,6 @@ The workflow described here outlines data processing for hydrogen/deuterium exch
   - Sample Data: Data_NoLabel.xlsx and Data_withLabel.xlsx
   - Script: HDX_Matching.R
   - Sample output file: Data_NoLabel_HDX_output.txt
-- Database filtering code to remove erroneous isomer candidates
-  - Script: Pubchem_reduction
 
 The script outlined below solves one of the underlying issues in HDX data processing, linking unlabeled and labeled features across data files. To do this, two example datasets were generated using a ThermoScientific LC-Q Exactive instrument operated in data dependent-MSMS mode with a BEH Amide column. One data set (Data_NoLabel.xlsx) was acquired using mobile phases consisting of 0.125% formic acid and 10 mM ammonium formate dissolved in water (A) or acetonitrile/water (95:5) (B). The other data set (Data_withLabel.xlsx) was acquired using 0.125% d2-Formic acid and 10mM d5-Ammonium Formate dissolved in D2O (A) or acetonitrile/D2O (95:5) (B). No matter what acquisition parameters are used, this script will only work if the same chromatography is used across different runs, with the only difference being deuterium oxide replacing water and deuterated buffers/mobile phase modifiers replacing their unlabeled counterparts. In other words, the retention times should be comparable across the two data sets, or at least the retention time differences should be relatively predictable.
 
