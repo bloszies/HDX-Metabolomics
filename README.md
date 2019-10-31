@@ -1,5 +1,5 @@
 # HDX-Metabolomics
-Underlying R script for database reduction and experimental data analysis
+Underlying R script for hydrogen/deuterium exchange MS data analysis and compound identification
 
 # Background/Purpose
 The workflow described here outlines data processing for hydrogen/deuterium exchange (HDX) mass spectrometry based compound identification. Briefly, HDX aids in compound identification because it highlights the exchangeable protons in chemical structures. By incorporating deuterium into LC mobile phase composition, exchangeable protons for all compounds in the sample should be replaced with deuterium, resulting in a 1 Da mass shift. By investigating both MS1 and MS/MS data, it is possible to determine the number and positions of exchangeable protons, which can greatly aid in filtering isomer candidates so that only high confidence potential structural matches remain. 
