@@ -1,7 +1,7 @@
 setwd("F:/Clay/D2O_Study/Github")
 #Data Input
-HILIC <- readxl::read_excel("Urine2_posCombined.xlsx", sheet = "NL_DataDict")
-HDX <- readxl::read_excel("Urine2_posCombined.xlsx", sheet = "wL_DataDict")
+HILIC <- readxl::read_excel("Data_NoLabel.xlsx", sheet = "NL_DataDict")
+HDX <- readxl::read_excel("Data_wLabel.xlsx", sheet = "wL_DataDict")
 HDX$`Average Rt(min)` <- as.numeric(HDX$`Average Rt(min)`)
 
 HILIC_MSMS <- HILIC[which(HILIC$`MS/MS assigned` == T),]
@@ -64,4 +64,4 @@ for (i in 1:nrow(HILIC_MSMS)) {
   HILIC_MSMS$`wL Exchange(s)`[i] <- paste(unique(MS2_Matching.df$MS1_HDX), collapse = ";")
 }
 
-write.table(HILIC_MSMS, file = "MSMS_LabelMatching.txt", sep = "\t")
+write.table(HILIC_MSMS, file = "Data_NoLabel_HDX_Output.txt", sep = "\t")
